@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
 
-  final driver = SizedBox(height: 20.0);
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    userNameController.text = '账号';
-    passwordController.text = '123456';
     const paddingValue = 30.0;
     var padding = Padding(
       padding: EdgeInsets.only(left: paddingValue, right: paddingValue),
@@ -34,34 +30,64 @@ class MyApp extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        driver,
+        createColumnDriver(20.0),
+        Image.asset('images/fish.png', color: Theme
+            .of(context)
+            .primaryColor,),
+        createColumnDriver(20.0),
         MyInputView(
             '请输入姓名', ImageIcon(AssetImage('images/userName_icon.png')),
             userNameController
         ),
-        driver,
+        createColumnDriver(20.0),
         MyInputView(
           '请输入密码', ImageIcon(AssetImage('images/password_icon.png')),
           passwordController,
           obscureText: true,
         ),
+        createColumnDriver(30.0),
+        createLoginBtn(context)
       ],);
   }
-}
 
-/// 只能输入数字
-class NumberFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue,
-      TextEditingValue newValue) {
-    var reg = new RegExp("^[0-9]+([.]{1}[0-9]+){0,1}\$");
-    if (reg.hasMatch(newValue.text) || newValue.text.isEmpty) {
-      return newValue;
-    }
-    return oldValue;
+  ///垂直间隔
+  createColumnDriver(double height) => SizedBox(height: height);
+
+  ///登录按钮
+  createLoginBtn(context) {
+    var loginBtn = RaisedButton(
+      child: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Text('登录',
+          style: TextStyle(
+              fontSize: 15.0,
+              fontWeight: FontWeight.bold
+          ),
+        ),
+      ),
+      onPressed: onClickLogin,
+      textColor: Colors.white,
+      highlightColor: Theme
+          .of(context)
+          .primaryColorDark,
+      color: Theme
+          .of(context)
+          .primaryColor,
+      shape: StadiumBorder(),
+    );
+    return Row(children: <Widget>[
+      Expanded(
+        child: loginBtn,
+      )
+    ],);
+  }
+
+  ///登录
+  onClickLogin() {
+    Fluttertoast.showToast(
+        msg: '账号：${userNameController.text}\n密码：${passwordController.text}');
   }
 }
-
 
 ///输入控件
 class MyInputView extends StatefulWidget {
@@ -78,7 +104,6 @@ class MyInputView extends StatefulWidget {
     return MyInputViewState(
         hintText, icon, obscureText, controller);
   }
-
 }
 
 ///输入控件的状态控制器
@@ -106,7 +131,13 @@ class MyInputViewState extends State<MyInputView> {
       });
     });
     inputBorder = BoxDecoration(
-      border: Border.all(color: borderColor, width: 1.5),
+        border: Border.all(
+          color: borderColor,
+          width: 1.5,
+        ),
+        borderRadius: BorderRadius.all(
+            Radius.circular(10.0)
+        )
     );
     return Container(
       child: createInputView(
